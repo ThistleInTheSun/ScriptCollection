@@ -4,14 +4,16 @@ import os
 from tqdm import tqdm
 from random import shuffle
 from shutil import copy
+import argparse
 
 
 def split_trainval(path, train_path, val_path, img_type, rate):
+    print(path)
     img_names = [x for x in os.listdir(path) if not x.endswith(".json")]
     shuffle(img_names)
     thr = int(len(img_names) * rate)
     # train
-    for img_n in tqdm(img_names[:thr]):
+    for img_n in tqdm(img_names[:thr], desc="train"):
         name = os.path.splitext(img_n)[0]
         src_img_path = os.path.join(path, img_n)
         tar_img_path = os.path.join(train_path, img_type + "_" + img_n)
@@ -21,7 +23,7 @@ def split_trainval(path, train_path, val_path, img_type, rate):
             tar_path = os.path.join(train_path, img_type + "_" + name + ".json")
             copy(src_path, tar_path)
     # val
-    for img_n in tqdm(img_names[thr:]):
+    for img_n in tqdm(img_names[thr:], desc="val"):
         name = os.path.splitext(img_n)[0]
         src_img_path = os.path.join(path, img_n)
         tar_img_path = os.path.join(val_path, img_type + "_" + img_n)
@@ -34,21 +36,19 @@ def split_trainval(path, train_path, val_path, img_type, rate):
 
     
 if __name__ == "__main__":
-    fimes = dict(
-        data_chair_clothes="chair_clothes",
-        data_plants="plants",
-        data_half_person_1="half_person",
-        data_half_person_office="office_person",
-        data_sideways_person="sideways_person",
-        data_garbage_can="garbage_can",
-        data_dog="dog",
-        data_cat="cat",
-        )
-    root = "/home/sdb1/xq/taiwan/data/object_detection/coco_wider_pedestrian/google_images/corrected_label"
-    train_path = "/home/sdb1/xq/taiwan/data/object_detection/coco_wider_pedestrian/google_images/train"
-    val_path = "/home/sdb1/xq/taiwan/data/object_detection/coco_wider_pedestrian/google_images/val"
-    rate = 0.667
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--img_ann_dir', type=str, help="")
+    parser.add_argument('--img_type', type=str, help="")
+    parser.add_argument('--train_path', type=str, help="")
+    parser.add_argument('--val_path', type=str, help="")
+    parser.add_argument('--rate', type=float, default=0.667, help="")
+    args = parser.parse_args()
+
+    img_ann_dir = args.img_ann_dir
+    img_type = args.img_type
+    train_path = args.train_path
+    val_path = args.val_path
+    rate = args.rate
     os.makedirs(train_path, exist_ok=True)
     os.makedirs(val_path, exist_ok=True)
-    for dir_name, img_type in fimes.items():
-        split_trainval(os.path.join(root, dir_name), train_path, val_path, img_type, rate)
+    split_trainval(img_ann_dir, train_path, val_path, img_type, rate)
