@@ -79,7 +79,7 @@ def combine_coco(gt_list, save_path):
     print("processing ...")
     for data in data_list:
         dic_img_id = {}  # old: new
-        # print("image:")
+        print("sub_data: img_nums = {}, ann_names = {}".format(len(data["images"]), len(data["categories"])))
         for img_info in tqdm(data["images"], desc="images"):
             cur_img_id = img_info["id"]
             if cur_img_id not in img_ids:
@@ -90,6 +90,7 @@ def combine_coco(gt_list, save_path):
                 else:
                     new_id = max(img_ids.keys()) + 1
                     dic_img_id[cur_img_id] = new_id
+                    img_info["id"] = new_id
                     img_ids[new_id] = img_info
 
         dic_categories_id = {}  # old: new
@@ -102,6 +103,7 @@ def combine_coco(gt_list, save_path):
                 else:
                     new_id = max(categories_ids.keys()) + 1
                     dic_categories_id[cur_categories_id] = new_id
+                    categories_info["id"] = new_id
                     categories_ids[new_id] = categories_info
             else:
                 categories_ids[cur_categories_id] = categories_info
@@ -117,9 +119,12 @@ def combine_coco(gt_list, save_path):
             if cur_anno_id in anno_ids:
                 new_id = max(anno_ids.keys()) + 1
                 dic_anno_id[cur_anno_id] = new_id
+                anno_info["id"] = new_id
                 anno_ids[new_id] = anno_info
             else:
                 anno_ids[cur_anno_id] = anno_info
+        print("after: img_nums = {}, ann_names = {}".format(len(img_ids.values()), len(anno_ids.values())))
+        print(len(set([x["id"] for x in img_ids.values()])), len(set([x["id"] for x in anno_ids.values()])))
 
     json_dict = dict(
         images=list(img_ids.values()),
