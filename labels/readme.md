@@ -93,3 +93,9 @@ python ~/ScriptCollection/labels/combine_coco.py \
 --coco2 /dataset/object_detection/coco_wider_pedestrian/google_images/add_json/add_val_person_2022-11-22_balance.json \
 --res_coco /dataset/object_detection/coco_wider_pedestrian/annotations/val_person_2022-11-22_balance.json
 ```
+
+# get_coco_nums
+```sh
+python ~/ScriptCollection/labels/get_coco_nums.py \
+--path /dataset/object_detection/coco_wider_pedestrian/google_images/add_json
+```
