@@ -11,58 +11,6 @@ import os
 from tqdm import tqdm
 
 
-def coco_filter_only_person(gt_path, gt_100):
-    with open(gt_path, "r") as f:
-        data = json.load(f)
-
-    annos = data["annotations"]
-    new_annos = []
-    for info in tqdm(annos):
-        if info["category_id"] == 1:
-            new_annos.append(info)
-    json_dict = dict(
-        images=data["images"],
-        annotations=new_annos,
-        categories=data["categories"],
-        info=data["info"],
-        # license=data["license"],
-    )
-    with open(gt_100, 'w') as f:
-        json.dump(json_dict, f, ensure_ascii=False)
-
-
-def get_img_nums(gt_dir):
-    files = os.listdir(gt_dir)
-    for f in files:
-        if not f.endswith(".json"):
-            continue
-        gt_path = os.path.join(gt_dir, f)
-
-        with open(gt_path, "r") as f:
-            data = json.load(f)
-        ad = 0
-        sur = 0
-        coco = 0
-        other = 0
-        for info in data["images"]:
-            if info["file_name"].startswith("ad"):
-                ad += 1
-            elif info["file_name"].startswith("sur"):
-                sur += 1
-            elif info["file_name"].startswith("0000"):
-                coco += 1
-            else:
-                other += 1
-                # print(info["file_name"])
-        cls = defaultdict(int)
-        for info in data["annotations"]:
-            cls[info["category_id"]] += 1
-        print("\n{}".format(f))
-        print("ad: {}, sur: {}, coco: {}, other: {}".format(ad, sur, coco, other))
-        print(cls)
-        print(data["categories"])
-
-
 def combine_coco(gt_list, save_path):
     data_list = []
     print("reading ...")
