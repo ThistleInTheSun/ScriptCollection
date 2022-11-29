@@ -13,14 +13,14 @@ from collections import defaultdict
 from tqdm import tqdm
 
 
-def balance(gt_path, gt_balance, each_num=2500):
+def balance(gt_path, gt_balance, each_num):
     coco = COCO(gt_path)
     with open(gt_path, "r") as f:
         data = json.load(f)
 
     new_imgs = data["images"]
     new_anns = data["annotations"]
-    print("before:", len(data["images"]), len(data["annotations"]))
+    print("before: img_nums = {}, ann_names = {}".format(len(data["images"]), len(data["annotations"])))
 
     img_balance_dict = defaultdict(list)
     for img_info in data["images"]:
@@ -55,15 +55,18 @@ def balance(gt_path, gt_balance, each_num=2500):
                 new_ann_info["id"] = max_ann_id
                 new_ann_info["image_id"] = max_img_id
                 new_anns.append(new_ann_info)
+        print(len(add_img_info_list))
+        print("after: img_nums = {}, ann_names = {}".format(len(new_imgs), len(new_anns)))
+        print(len(set([x["id"] for x in new_imgs])), len(set([x["id"] for x in new_anns])))
     
     repeat_info(img_balance_dict["chair"])
     repeat_info(img_balance_dict["garbage"])
     repeat_info(img_balance_dict["plants"])
     repeat_info(img_balance_dict["half"] + img_balance_dict["office"] + img_balance_dict["sideways"])
     repeat_info(img_balance_dict["ergonomic"])
-    repeat_info(img_balance_dict["ergonomic1"])
+    # repeat_info(img_balance_dict["ergonomic1"])
     
-    print(len(new_imgs), len(new_anns))
+    print("after: img_nums = {}, ann_names = {}".format(len(new_imgs), len(new_anns)))
     print(len(set([x["id"] for x in new_imgs])), len(set([x["id"] for x in new_anns])))
 
     shuffle(new_imgs)

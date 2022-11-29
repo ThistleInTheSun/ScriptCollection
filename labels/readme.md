@@ -97,5 +97,14 @@ python ~/ScriptCollection/labels/combine_coco.py \
 # get_coco_nums
 ```sh
 python ~/ScriptCollection/labels/get_coco_nums.py \
---path /dataset/object_detection/coco_wider_pedestrian/google_images/add_json
+# get_coco_random
+```sh
+root="/dataset/object_detection/coco_wider_pedestrian"
+coco_name="val_person_pets_2022-11-22_balance"
+python ~/ScriptCollection/labels/get_coco_random.py \
+--gt_path ${root}/annotations/${coco_name}.json \
+--num 100 \
+--txt_sub ${root}/${coco_name}_100.txt \
+--img_root ${root}/val \
+--img_sub_dir ${root}/images_${coco_name}_100
 ```
